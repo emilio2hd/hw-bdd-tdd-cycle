@@ -1,0 +1,14 @@
+alien:
+  title: Alien
+  rating: R
+  director: Ridley Scott
+  release_date: 1979-05-25
+blade_runer:
+  title: Blade Runner
+  rating: PG
+  director: Ridley Scott
+  release_date: 1982-06-25
+star_wars:
+  title: Star Wars
+  rating: PG
+  release_date: 1977-05-25
