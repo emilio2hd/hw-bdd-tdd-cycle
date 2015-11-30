@@ -62,11 +62,14 @@ class MoviesController < ApplicationController
   end
 
   def search_directors
-    begin
-      @movies = Movie.find_all_director_by(params[:id])
-    rescue ArgumentError => e
-      flash[:message] = e.message
-      redirect_to root_path and return
+    @movie = Movie.find_by_id(params[:id])
+
+    director = "#{@movie.director}"
+    unless director.blank?
+      @movies = Movie.find_all_director_by(director)
+    else
+      flash[:warning] = "'#{@movie.title}' has no director info"
+      redirect_to root_path
     end
   end
 end

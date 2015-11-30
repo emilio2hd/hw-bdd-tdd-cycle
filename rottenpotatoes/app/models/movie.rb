@@ -3,11 +3,7 @@ class Movie < ActiveRecord::Base
     %w(G PG PG-13 NC-17 R)
   end
 
-  def self.find_all_director_by(movie_id)
-    movie = find_by_id movie_id
-
-    raise ArgumentError, "'#{movie.title}' has no director info" if "#{movie.director}".empty?
-
-    return Movie.where(director: movie.director)
+  def self.find_all_director_by(director)
+    return Movie.where(director: director)
   end
 end

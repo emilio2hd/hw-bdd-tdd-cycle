@@ -7,14 +7,21 @@ RSpec.describe MoviesController, :type => :controller do
             let(:director_name) { 'Ridley Scott' }
             let(:movie_list) { [double('Movie'), double('Movie')] }
 
+            before do
+                fake_movie = double('Movie')
+                allow(fake_movie).to receive(:director).and_return(director_name)
+
+                expect(Movie).to receive(:find_by_id).with(movie_id).and_return(fake_movie)
+            end
+
             it 'should call the model method that performs director search' do
-                expect(Movie).to receive(:find_all_director_by).with(movie_id)
+                expect(Movie).to receive(:find_all_director_by).with(director_name)
 
                 get :search_directors, id: movie_id
             end
 
             it 'should make the director search render search view' do
-                expect(Movie).to receive(:find_all_director_by).with(movie_id)
+                expect(Movie).to receive(:find_all_director_by).with(director_name)
 
                 get :search_directors, id: movie_id
 
@@ -22,7 +29,7 @@ RSpec.describe MoviesController, :type => :controller do
             end
 
             it 'should make the director search results available to that template' do
-                expect(Movie).to receive(:find_all_director_by).with(movie_id).and_return(movie_list)
+                expect(Movie).to receive(:find_all_director_by).with(director_name).and_return(movie_list)
 
                 get :search_directors, id: movie_id
 
@@ -36,7 +43,12 @@ RSpec.describe MoviesController, :type => :controller do
             let(:no_director_message){ "'#{movie_without_director_name}' has no director info" }
 
             before do
-                expect(Movie).to receive(:find_all_director_by).with(movie_without_director_id).and_raise(ArgumentError, no_director_message)
+                fake_movie = double('Movie')
+                allow(fake_movie).to receive(:director).and_return(nil)
+                allow(fake_movie).to receive(:title).and_return(movie_without_director_name)
+
+                expect(Movie).to receive(:find_by_id).with(movie_without_director_id).and_return(fake_movie)
+
                 get :search_directors, id: movie_without_director_id
             end
 
@@ -48,9 +60,9 @@ RSpec.describe MoviesController, :type => :controller do
                 expect(response).to redirect_to(root_path)
             end
 
-            it 'should has flash message' do
-                expect(flash[:message]).to be_present
-                expect(flash[:message]).to eq(no_director_message)
+            it 'should has flash warning' do
+                expect(flash[:warning]).to be_present
+                expect(flash[:warning]).to eq(no_director_message)
             end
         end
     end
